@@ -1,9 +1,9 @@
 import { NextPage } from 'next';
-import React, { ReactNode, useState } from 'react';
+import React, { createContext, ReactNode, useState } from 'react';
 import { Layout } from '../../components/layout';
 import { AddQuestion, QuizInput } from '../../components/quiz';
 import { useForm } from 'react-hook-form';
-import { useEffectOnce } from 'usehooks-ts';
+import { useCounter, useEffectOnce } from 'usehooks-ts';
 import { toast } from 'react-hot-toast';
 import { classNames, supabase } from '../../utils';
 
@@ -16,29 +16,50 @@ interface QuestionAndAnswer {
 	quiz: string;
 }
 
+interface Item {
+	number: number;
+	component: ReactNode;
+}
+
+export const NewQuizContext = createContext({
+	items: [] as Item[],
+	setItems(items: Item[]) {},
+});
+
 const NewQuiz: NextPage = () => {
-	const [items, setItems] = useState<ReactNode[]>([]);
+	const { count, increment } = useCounter(1);
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 		getValues,
 	} = useForm();
+	const [isLoading, setIsLoading] = useState(false);
+
+	const [items, setItems] = useState<Item[]>([]);
 
 	const addQuestion = () => {
 		setItems([
 			...items,
-			<QuizInput
-				register={register}
-				number={items.length + 1}
-				key={items.length + 1}
-				error={errors[`question${items.length + 1}`]}
-			/>,
+			{
+				number: count,
+				component: (
+					<QuizInput
+						register={register}
+						number={count}
+						key={count}
+						error={errors[`question${count}`]}
+					/>
+				),
+			},
 		]);
+		increment();
 	};
 
 	const handleSave = async () => {
 		try {
+			// TODO: if quiz is empty, don't save
+			setIsLoading(true);
 			const {
 				data: { user },
 				error: userError,
@@ -57,8 +78,8 @@ const NewQuiz: NextPage = () => {
 			const questionsAnswer: QuestionAndAnswer[] = [];
 			for (let i = 1; i <= items.length; i++) {
 				questionsAnswer.push({
-					question: getValues(`question${i}`),
-					answer: getValues(`answer${i}`),
+					question: getValues(`question${items[i].number}`),
+					answer: getValues(`answer${items[i].number}`),
 					quiz: quizData[0].uuid,
 				});
 			}
@@ -70,12 +91,14 @@ const NewQuiz: NextPage = () => {
 		} catch (err: any) {
 			console.log(err);
 			toast.error(err.message);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
-	useEffectOnce(() => {
-		addQuestion();
-	});
+	// useEffectOnce(() => {
+	// 	addQuestion();
+	// });
 	return (
 		<Layout>
 			<form
@@ -104,11 +127,20 @@ const NewQuiz: NextPage = () => {
 							'input input-bordered w-full max-w-lg'
 						)}
 					/>
-					<button type='submit' className='btn btn-info'>
+					<button
+						type='submit'
+						className={classNames(isLoading ? 'loading' : '', 'btn btn-info')}
+						disabled={isLoading}>
 						Save
 					</button>
 				</span>
-				{items.map((item) => item)}
+				<NewQuizContext.Provider
+					value={{
+						items,
+						setItems,
+					}}>
+					{items.map((item: Item) => item.component)}
+				</NewQuizContext.Provider>
 				<AddQuestion addQuestion={addQuestion} />
 			</form>
 		</Layout>

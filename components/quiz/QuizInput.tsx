@@ -1,5 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
+import { NewQuizContext } from '../../pages/quizes/new';
 
 interface Props {
 	register: any;
@@ -8,11 +9,17 @@ interface Props {
 }
 
 const QuizInput: FC<Props> = ({ register, number, error }) => {
+	const { items, setItems } = useContext(NewQuizContext);
+
+	const deleteItem = () => {
+		const newItems = items.filter((item) => item.number !== number);
+		setItems(newItems);
+	};
 	return (
 		<div className='card w-full max-w-7xl cursor-pointer bg-base-100 text-base-content shadow-md'>
 			<div className='card-body w-full items-center text-center '>
 				<h3>Question {number}</h3>
-				<span className='absolute top-5 right-5'>
+				<span className='absolute top-5 right-5' onClick={() => deleteItem()}>
 					<TrashIcon className='h-6 w-6 duration-150 hover:-translate-y-1' />
 				</span>
 				<div className='flex w-full flex-col items-center justify-center lg:flex-row lg:gap-2'>
