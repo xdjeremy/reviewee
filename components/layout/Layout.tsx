@@ -56,7 +56,9 @@ const Layout = ({ children }: any) => {
 					</div>
 				</div>
 				{/* <!-- Page content here --> */}
-				<div className='h-screen bg-gray-100 p-10'>{children}</div>
+				<div className='h-screen overflow-y-scroll bg-gray-100 p-10'>
+					{children}
+				</div>
 			</div>
 			<div className='drawer-side'>
 				<label htmlFor='my-drawer-3' className='drawer-overlay'></label>
