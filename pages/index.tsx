@@ -1,7 +1,5 @@
 import type { NextPage } from 'next';
 import Image from 'next/image';
-import { Title } from '../components/header';
-import { Button } from '../components/landing';
 
 const Home: NextPage = () => {
 	return (
@@ -76,7 +74,7 @@ const Home: NextPage = () => {
 							}
 							width={1000}
 							height={1000}
-							alt='macboko'
+							alt='macbook'
 						/>
 					</div>
 				</div>
