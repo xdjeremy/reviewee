@@ -5,7 +5,11 @@ module.exports = {
 		'./components/**/*.{js,ts,jsx,tsx}',
 	],
 	theme: {
-		extend: {},
+		extend: {
+			backgroundImage: {
+				header: "url('/header.png')",
+			},
+		},
 		fontFamily: {
 			sans: ['Inter', 'sans-serif'],
 		},
