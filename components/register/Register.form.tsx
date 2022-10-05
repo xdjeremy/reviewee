@@ -4,6 +4,8 @@ import { toast } from 'react-hot-toast';
 import { classNames, supabase } from '../../utils';
 import { TextInput } from '../form';
 
+// TODO: show success
+
 const RegisterForm: FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const {
@@ -21,6 +23,8 @@ const RegisterForm: FC = () => {
 				password: getValues('password'),
 			});
 			if (error) throw error;
+
+			toast.success('Successfully registered');
 		} catch (err: any) {
 			toast.error(err.message);
 		} finally {
