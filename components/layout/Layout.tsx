@@ -1,5 +1,8 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
+import { useEffectOnce } from 'usehooks-ts';
+import { supabase } from '../../utils';
 
 const Links = [
 	{
@@ -17,13 +20,25 @@ const Links = [
 ];
 
 const Layout = ({ children }: any) => {
+	const router = useRouter();
+	useEffectOnce(() => {
+		const checkLogin = async () => {
+			const { data, error } = await supabase.auth.getSession();
+			if (error || data.session === null) {
+				router.push('/login');
+				return null;
+			}
+		};
+		checkLogin();
+	});
+
 	return (
 		<div className='drawer'>
 			<input id='my-drawer-3' type='checkbox' className='drawer-toggle' />
 			<div className='drawer-content flex flex-col'>
 				<div className='navbar w-full bg-base-300'>
 					<div className='flex-none lg:hidden'>
-						<label htmlFor='my-drawer-3' className='btn btn-ghost btn-square'>
+						<label htmlFor='my-drawer-3' className='btn btn-square btn-ghost'>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
 								fill='none'

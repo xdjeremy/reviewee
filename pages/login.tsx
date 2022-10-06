@@ -1,10 +1,25 @@
 import { NextPage } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
+import { useEffectOnce } from 'usehooks-ts';
 import { Title } from '../components/header';
 import { LoginForm } from '../components/login';
+import { supabase } from '../utils';
 
 const Login: NextPage = () => {
+	const router = useRouter();
+
+	useEffectOnce(() => {
+		const checkLogin = async () => {
+			const { data } = await supabase.auth.getSession();
+			if (data.session !== null) {
+				router.push('/dashboard');
+				return null;
+			}
+		};
+		checkLogin();
+	});
 	return (
 		<div className='flex h-screen flex-col bg-gradient-to-b from-purple-800 to-orange-700'>
 			<Title color='light' />
