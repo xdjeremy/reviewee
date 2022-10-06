@@ -1,25 +1,52 @@
 import { NextPage } from 'next';
-import React from 'react';
+import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useEffectOnce } from 'usehooks-ts';
 import { Layout } from '../../components/layout';
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import { CreateNewQuiz, QuizPreviewItem } from '../../components/quiz';
+import { supabase } from '../../utils';
+
+interface Quiz {
+	uuid: string;
+	title: string;
+}
 
 const Quizes: NextPage = () => {
+	const [quiz, setQuiz] = useState<Quiz[]>();
+
+	useEffectOnce(() => {
+		const fetchQuizes = async () => {
+			const {
+				data: { user: userData },
+			} = await supabase.auth.getUser();
+			const { data, error } = await supabase
+				.from('quiz')
+				.select('*')
+				.order('created_at', { ascending: false })
+				.eq('owner', userData?.id);
+			if (error) {
+				toast.error(error.message);
+			}
+			setQuiz(data!);
+		};
+		fetchQuizes();
+	});
+
 	return (
 		<Layout>
-			{/* if no quiz yet */}
-			<div className='flex items-center justify-center'>
-				<Link href={'/quizes/new'}>
-					<div className='card w-96 cursor-pointer bg-base-100 text-base-content shadow-md duration-150 hover:-translate-y-1'>
-						<div className='card-body items-center text-center'>
-							<h2 className='card-title'>Create New Quiz!</h2>
-							<p>Get started with your new quiz.</p>
-							<div className='card-actions justify-end'>
-								<PlusCircleIcon className='h-20 w-20' />
-							</div>
-						</div>
-					</div>
-				</Link>
+			<div className='mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4'>
+				{quiz &&
+					quiz.map((q) => (
+						<QuizPreviewItem
+							key={q.uuid}
+							id={q.uuid}
+							title={q.title}
+							description={'test desc'}
+						/>
+					))}
+
+				{/* if there are no quiz yet */}
+				<CreateNewQuiz />
 			</div>
 		</Layout>
 	);

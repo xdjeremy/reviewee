@@ -7,9 +7,6 @@ import { useCounter, useEffectOnce } from 'usehooks-ts';
 import { toast } from 'react-hot-toast';
 import { classNames, supabase } from '../../utils';
 
-// TODO: delete item
-// TODO; redirect logged out users using the layout
-
 interface QuestionAndAnswer {
 	question: string;
 	answer: string;
@@ -58,8 +55,12 @@ const NewQuiz: NextPage = () => {
 
 	const handleSave = async () => {
 		try {
-			// TODO: if quiz is empty, don't save
 			setIsLoading(true);
+
+			if (items.length === 0) {
+				throw new Error('Quiz is empty');
+			}
+
 			const {
 				data: { user },
 				error: userError,
