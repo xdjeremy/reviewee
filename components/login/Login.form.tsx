@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -6,6 +7,7 @@ import { TextInput } from '../form';
 
 const LoginForm: FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
+	const router = useRouter();
 	const {
 		register,
 		handleSubmit,
@@ -21,6 +23,8 @@ const LoginForm: FC = () => {
 				password: getValues('password'),
 			});
 			if (error) throw error;
+			toast.success('Successfully logged in!');
+			router.push('/dashboard');
 		} catch (err: any) {
 			toast.error(err.message);
 		} finally {

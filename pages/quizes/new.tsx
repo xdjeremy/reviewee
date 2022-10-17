@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useCounter, useEffectOnce } from 'usehooks-ts';
 import { toast } from 'react-hot-toast';
 import { classNames, supabase } from '../../utils';
+import { useRouter } from 'next/router';
 
 interface QuestionAndAnswer {
 	question: string;
@@ -32,6 +33,7 @@ const NewQuiz: NextPage = () => {
 		getValues,
 	} = useForm();
 	const [isLoading, setIsLoading] = useState(false);
+	const router = useRouter();
 
 	const [items, setItems] = useState<Item[]>([]);
 
@@ -73,22 +75,27 @@ const NewQuiz: NextPage = () => {
 					owner: user?.id,
 					title: getValues('title'),
 				})
-				.select('uuid');
+				.select('id');
 			if (quizError) throw quizError;
 
-			const questionsAnswer: QuestionAndAnswer[] = [];
-			for (let i = 1; i <= items.length; i++) {
-				questionsAnswer.push({
-					question: getValues(`question${items[i].number}`),
-					answer: getValues(`answer${items[i].number}`),
-					quiz: quizData[0].uuid,
-				});
-			}
+			const quizItems = items;
+			let questionsAnswer: QuestionAndAnswer[] = [];
+			quizItems.forEach((item) => {
+				const question = getValues(`question${item.number}`);
+				const answer = getValues(`answer${item.number}`);
+				const quiz = quizData[0].id;
+				questionsAnswer.push({ question, answer, quiz });
+			});
 
 			const { error } = await supabase
 				.from('quiz_items')
 				.insert(questionsAnswer);
 			if (error) throw error;
+
+			// success
+			toast.success('Quiz created successfully');
+			// TODO: redirect to quiz page
+			router.push(`/quizes/${quizData[0].id}`);
 		} catch (err: any) {
 			console.log(err);
 			toast.error(err.message);

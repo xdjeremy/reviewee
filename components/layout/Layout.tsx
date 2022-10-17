@@ -38,7 +38,10 @@ const Layout = ({ children }: any) => {
 			<div className='drawer-content flex flex-col'>
 				<div className='navbar w-full bg-base-300'>
 					<div className='flex-none lg:hidden'>
-						<label htmlFor='my-drawer-3' className='btn btn-square btn-ghost'>
+						<label
+							id='burger'
+							htmlFor='my-drawer-3'
+							className='btn btn-ghost btn-square'>
 							<svg
 								xmlns='http://www.w3.org/2000/svg'
 								fill='none'
@@ -63,7 +66,7 @@ const Layout = ({ children }: any) => {
 							{Links.map((link) => (
 								<li key={link.name}>
 									<Link href={link.href}>
-										<a>{link.name}</a>
+										<a id={link.name}>{link.name}</a>
 									</Link>
 								</li>
 							))}

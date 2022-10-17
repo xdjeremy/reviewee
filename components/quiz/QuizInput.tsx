@@ -41,8 +41,8 @@ const QuizInput: FC<Props> = ({ register, number, error }) => {
 									message: 'Question is required',
 								},
 								maxLength: {
-									value: 100,
-									message: 'Question must be less than 100 characters',
+									value: 500,
+									message: 'Question must be less than 500 characters',
 								},
 							})}
 						/>
