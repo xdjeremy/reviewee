@@ -16,10 +16,10 @@ const ShowQuizCard: FC<Props> = ({isFlipped = false, front, back}) => {
     return (
         <div className={'w-full'}>
         <ReactCardFlip isFlipped={isFlippedState}>
-            <div className={'bg-base-100 w-full px-8 py-20 rounded-lg text-center text-xl'} onClick={toggle}>
+            <div className={'bg-base-100 w-full px-8 py-20 rounded-lg text-center text-xl cursor-pointer'} onClick={toggle}>
                 {front}
             </div>
-            <div className={'bg-base-300 w-full px-8 py-20 rounded-lg text-center text-xl'} onClick={toggle}>
+            <div className={'bg-base-300 w-full px-8 py-20 rounded-lg text-center text-xl cursor-pointer'} onClick={toggle}>
                 {back}
             </div>
         </ReactCardFlip>

@@ -54,7 +54,7 @@ const ReviewPage: FC = () => {
         switch (action) {
             case Action.PICKING:
                 return (
-                    <div className='mx-auto flex w-full flex-col justify-center gap-5 lg:flex-row'>
+                    <div className='mx-auto flex w-full flex-col justify-center gap-5 lg:flex-row bg-base-100 rounded-lg shadow-sm lg:divide-x divide-y'>
                         <ReviewQuizButton/>
                         <ShowQuizButton/>
                     </div>
@@ -68,7 +68,7 @@ const ReviewPage: FC = () => {
 
     return (
         <Layout>
-            <h2 className='mx-auto mb-7 w-full text-center text-4xl'>{quizTitle}</h2>
+            <h2 className='mx-auto mb-7 w-full text-3xl font-semibold'>{quizTitle}</h2>
             {renderPage()}
         </Layout>
     );
