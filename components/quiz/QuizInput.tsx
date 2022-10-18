@@ -1,6 +1,6 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
 import React, { FC, useContext } from 'react';
-import { NewQuizContext } from '../../pages/quizes/new';
+import { NewQuizContext } from '../../pages/quiz/new';
 
 interface Props {
 	register: any;

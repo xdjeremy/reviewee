@@ -14,7 +14,7 @@ const QuizPreviewItem: FC<QuizPreviewItemProps> = ({
 }) => {
 	return (
 		<div className='flex items-center justify-center'>
-			<Link href={'/quizes/new'}>
+			<Link href={`/quiz/${id}`}>
 				<div className='card h-52 w-96 cursor-pointer bg-base-100 text-base-content shadow-md duration-150 hover:-translate-y-1'>
 					<div className='card-body flex items-center justify-center text-center'>
 						<h2 className='card-title'>{title}</h2>

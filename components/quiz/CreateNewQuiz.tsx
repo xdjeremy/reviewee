@@ -5,8 +5,8 @@ import React, { FC } from 'react';
 const CreateNewQuiz: FC = () => {
 	return (
 		<div className='flex items-center justify-center'>
-			<Link href={'/quizes/new'}>
-				<div className='card h-52 w-96 cursor-pointer bg-base-100 text-base-content shadow-md duration-150 hover:-translate-y-1'>
+			<Link href={'/quiz/new'}>
+				<div className='card h-52 w-96 cursor-pointer bg-primary text-primary-content shadow-md duration-150 hover:-translate-y-1'>
 					<div className='card-body items-center text-center'>
 						<h2 className='card-title'>Create New Quiz!</h2>
 						<p>Get started with your new quiz.</p>

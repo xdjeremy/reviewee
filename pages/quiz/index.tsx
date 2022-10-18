@@ -7,15 +7,15 @@ import { CreateNewQuiz, QuizPreviewItem } from '../../components/quiz';
 import { supabase } from '../../utils';
 
 interface Quiz {
-	uuid: string;
+	id: string;
 	title: string;
 }
 
-const Quizes: NextPage = () => {
+const Quizzes: NextPage = () => {
 	const [quiz, setQuiz] = useState<Quiz[]>();
 
 	useEffectOnce(() => {
-		const fetchQuizes = async () => {
+		const fetchQuizzes = async () => {
 			const {
 				data: { user: userData },
 			} = await supabase.auth.getUser();
@@ -29,7 +29,7 @@ const Quizes: NextPage = () => {
 			}
 			setQuiz(data!);
 		};
-		fetchQuizes();
+		fetchQuizzes().then(r => r);
 	});
 
 	return (
@@ -38,8 +38,8 @@ const Quizes: NextPage = () => {
 				{quiz &&
 					quiz.map((q) => (
 						<QuizPreviewItem
-							key={q.uuid}
-							id={q.uuid}
+							key={q.id}
+							id={q.id}
 							title={q.title}
 							description={'test desc'}
 						/>
@@ -52,4 +52,4 @@ const Quizes: NextPage = () => {
 	);
 };
 
-export default Quizes;
+export default Quizzes;

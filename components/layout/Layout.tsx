@@ -10,8 +10,8 @@ const Links = [
 		href: '/dashboard',
 	},
 	{
-		name: 'Quizes',
-		href: '/quizes',
+		name: 'Quizzes',
+		href: '/quiz',
 	},
 	{
 		name: 'Logout',
@@ -74,7 +74,7 @@ const Layout = ({ children }: any) => {
 					</div>
 				</div>
 				{/* <!-- Page content here --> */}
-				<div className='h-screen overflow-y-scroll bg-gray-100 p-10'>
+				<div className='h-screen overflow-y-scroll bg-base-200 p-10'>
 					{children}
 				</div>
 			</div>

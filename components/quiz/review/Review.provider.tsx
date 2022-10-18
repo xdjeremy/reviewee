@@ -1,8 +1,15 @@
 import React, { createContext, useContext, useState } from 'react';
 
-interface QuizItems {
+export interface QuizItems {
 	question: string;
 	answer: string;
+}
+
+interface Answer {
+	question: string;
+	answer: string;
+	correctAnswer: string;
+	isCorrect: boolean;
 }
 
 enum Action {
@@ -23,6 +30,22 @@ const ReviewContext = createContext({
 	setItems: (_items: QuizItems[]) => {},
 	quizTitle: '',
 	setQuizTitle: (_title: string) => {},
+
+	score: 0,
+	setScore: (_score: number) => {},
+	quizItem: [{
+		question: '',
+		answer: '',
+	}],
+	setQuizItem: (_quizItem: QuizItems[]) => {},
+
+	answers: [{
+		question: '',
+		answer: '',
+		correctAnswer: '',
+		isCorrect: false,
+	}],
+	setAnswers: (_answers: Answer[]) => {},
 });
 
 const useReview = () => {
@@ -43,6 +66,17 @@ const ReviewProvider = ({ children }: any) => {
 	]);
 	const [quizTitle, setQuizTitle] = useState<string>('');
 
+	const [ score, setScore ] = useState<number>(0);
+	const [questionNumber, setQuestionNumber] = useState<number>(0);
+	const [quizItem, setQuizItem] = useState(items)
+
+	const [ answers, setAnswers ] = useState<Answer[]>([]);
+
+
+	const randomizeQuiz = () => {
+		setQuizItem(items.sort(() => Math.random() - 0.5))
+	}
+
 	return (
 		<ReviewContext.Provider
 			value={{
@@ -52,6 +86,12 @@ const ReviewProvider = ({ children }: any) => {
 				setItems,
 				quizTitle,
 				setQuizTitle,
+				score,
+				setScore,
+				quizItem,
+				setQuizItem,
+				answers,
+				setAnswers,
 			}}>
 			{children}
 		</ReviewContext.Provider>
