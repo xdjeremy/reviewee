@@ -7,6 +7,7 @@ import {Action, QuizItems, useReview} from './Review.provider';
 import {ReviewQuizButton} from './ReviewQuiz.button';
 import {ShowQuizButton} from './ShowQuiz.button';
 import FlashcardPage from "./Flashcard.page";
+import ShowQuizPage from "./ShowQuiz.page";
 
 const ReviewPage: FC = () => {
     const {setQuizTitle, setItems, quizTitle, action, setQuizItem} = useReview();
@@ -61,7 +62,7 @@ const ReviewPage: FC = () => {
             case Action.REVIEW:
                 return <FlashcardPage/>;
             case Action.SHOW:
-                return <div>Show</div>;
+                return <ShowQuizPage />;
         }
     };
 
