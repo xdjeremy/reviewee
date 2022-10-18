@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 export interface QuizItems {
 	question: string;
 	answer: string;
+	id: string;
 }
 
 interface Answer {
@@ -10,6 +11,7 @@ interface Answer {
 	answer: string;
 	correctAnswer: string;
 	isCorrect: boolean;
+	id: string;
 }
 
 enum Action {
@@ -19,33 +21,40 @@ enum Action {
 }
 
 const ReviewContext = createContext({
-	action: Action.PICKING,
-	setAction: (_action: Action) => {},
-	items: [
-		{
-			question: '',
-			answer: '',
-		},
-	],
-	setItems: (_items: QuizItems[]) => {},
-	quizTitle: '',
-	setQuizTitle: (_title: string) => {},
+  action: Action.PICKING,
+  setAction: (_action: Action) => {},
+  items: [
+    {
+      question: "",
+      answer: "",
+      id: "",
+    },
+  ],
+  setItems: (_items: QuizItems[]) => {},
+  quizTitle: "",
+  setQuizTitle: (_title: string) => {},
 
-	score: 0,
-	setScore: (_score: number) => {},
-	quizItem: [{
-		question: '',
-		answer: '',
-	}],
-	setQuizItem: (_quizItem: QuizItems[]) => {},
+  score: 0,
+  setScore: (_score: number) => {},
+  quizItem: [
+    {
+      question: "",
+      answer: "",
+      id: "",
+    },
+  ],
+  setQuizItem: (_quizItem: QuizItems[]) => {},
 
-	answers: [{
-		question: '',
-		answer: '',
-		correctAnswer: '',
-		isCorrect: false,
-	}],
-	setAnswers: (_answers: Answer[]) => {},
+  answers: [
+    {
+      question: "",
+      answer: "",
+      id: "",
+      correctAnswer: "",
+      isCorrect: false,
+    },
+  ],
+  setAnswers: (_answers: Answer[]) => {},
 });
 
 const useReview = () => {
@@ -62,6 +71,7 @@ const ReviewProvider = ({ children }: any) => {
 		{
 			question: '',
 			answer: '',
+			id: '',
 		},
 	]);
 	const [quizTitle, setQuizTitle] = useState<string>('');

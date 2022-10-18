@@ -4,13 +4,19 @@ import { useEffectOnce } from "usehooks-ts";
 import FlashcardQuestionItem from "./FlashcardQuestion.item";
 import FlashcardAnswerButton from "./FlashcardAnswer.button";
 import FlashCardResultPage from "./FlashcardResult.page";
+import { supabase } from "../../../utils";
+import { useRouter } from "next/router";
+import { toast } from "react-hot-toast";
 
 const FlashcardPage: FC = () => {
+  const router = useRouter();
+  const { id } = router.query;
   const { items, setQuizItem, quizItem, setScore, score, setAnswers, answers } =
     useReview();
   const [currentQuestion, setCurrentQuestion] = useState<QuizItems>({
     question: "",
     answer: "",
+    id: "",
   });
 
   const [answer, setAnswer] = useState<string>("");
@@ -50,14 +56,16 @@ const FlashcardPage: FC = () => {
     return void 0;
   };
 
-  const onNext = () => {
+  const onNext = async () => {
     // add the result to the answers array
     const result = {
       question: currentQuestion.question,
       answer: answer,
       correctAnswer: currentQuestion.answer,
+      id: currentQuestion.id,
       isCorrect: answer === currentQuestion.answer,
     };
+    // setAnswers([...answers, result]);
     setAnswers([...answers, result]);
 
     //    check if the answer is correct
@@ -66,8 +74,45 @@ const FlashcardPage: FC = () => {
     }
     //    if there are no more questions, go to the results page
     if (quizItem.length === 0) {
-      setShowResult(true);
-      return;
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) {
+          throw userError;
+        }
+
+        console.log(id);
+        const { data: quizAttemptData, error: quizAttemptError } =
+          await supabase
+            .from("quiz_attempts")
+            .insert({
+              quiz: id,
+              owner: user?.id,
+            })
+            .select("id");
+        if (quizAttemptError) throw quizAttemptError;
+
+        // save the results
+        const { error } = await supabase.from("quiz_attempt_items").insert(
+          answers.map((answer) => ({
+            quiz_item: answer.id,
+            answer: answer.answer,
+            is_correct: answer.isCorrect,
+            owner: user?.id,
+            quiz_attempt: quizAttemptData[0].id,
+          }))
+        );
+        if (error) throw error;
+
+        setShowResult(true);
+        return;
+      } catch (err: any) {
+        console.log(err);
+        toast.error(err.message);
+      }
     }
     //    if there are more questions, get the next question
     setAnswer("");

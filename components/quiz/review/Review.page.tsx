@@ -24,7 +24,7 @@ const ReviewPage: FC = () => {
                 error: any;
             } = await supabase
                 .from('quiz_items')
-                .select(`question, answer, quiz(title)`)
+                .select(`question, answer, quiz(title), id`)
                 .eq('quiz', id);
 
             if (error) {
