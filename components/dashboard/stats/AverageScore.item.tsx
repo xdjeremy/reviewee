@@ -41,7 +41,7 @@ const AverageScoreItem: FC = () => {
     fetchAverageScore().then((_r) => setLoading(false));
   });
   return (
-    <StatItem title={'Average Score'} value={averageScore} loading={loading} icon={<ArrowTrendingUpIcon className={'w-8 h-8 stroke-2'} />} />
+    <StatItem title={'Average Score'} value={averageScore + '%'} loading={loading} icon={<ArrowTrendingUpIcon className={'w-8 h-8 stroke-2'} />} />
   );
 };
 

@@ -95,7 +95,7 @@ const NewQuiz: NextPage = () => {
 			// success
 			toast.success('Quiz created successfully');
 			// TODO: redirect to quiz page
-			router.push(`/quizes/${quizData[0].id}`);
+			router.push(`/quiz/${quizData[0].id}`);
 		} catch (err: any) {
 			console.log(err);
 			toast.error(err.message);

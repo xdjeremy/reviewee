@@ -3,7 +3,7 @@ import Skeleton from "react-loading-skeleton";
 
 interface Props {
     title: string;
-    value: number;
+    value: number | string;
     loading: boolean;
     description?: string;
     icon: ReactNode
