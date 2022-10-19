@@ -36,7 +36,7 @@ const Layout = ({ children }: any) => {
     <div className="drawer">
       <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-        <div className="navbar w-full bg-base-100">
+        <div className="navbar w-full bg-base-100 max-w-5xl mx-auto">
           <div className="flex-none lg:hidden">
             <label
               id="burger"
