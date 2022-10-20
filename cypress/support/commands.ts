@@ -48,13 +48,15 @@ declare global {
 	}
 }
 
-Cypress.Commands.add(`signIn`, () => {
-	cy.log(`Signing in.`);
-	cy.clearCookies({ domain: null });
-	cy.visit(`/login`);
-	cy.get('input[name="email"]').type('demansoy@gmail.com');
-	cy.get('input[name="password"]').type('mitangmonds');
-	cy.get('button[type="submit"]').click();
-	// wait
-	cy.wait(1000);
-});
+// Cypress.Commands.add(`signIn`, () => {
+// 	cy.log(`Signing in.`);
+// 	cy.clearCookies({ domain: null });
+// 	cy.visit(`/login`);
+// 	cy.get('input[name="email"]').type('demansoy@gmail.com');
+// 	cy.get('input[name="password"]').type('mitangmonds');
+// 	cy.get('button[type="submit"]').click();
+// 	// wait
+// 	cy.wait(1000);
+// });
+
+export {}
