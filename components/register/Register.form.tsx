@@ -24,7 +24,7 @@ const RegisterForm: FC = () => {
 			});
 			if (error) throw error;
 
-			toast.success('Successfully registered');
+			toast.success('Check your email for confirmation link');
 		} catch (err: any) {
 			toast.error(err.message);
 		} finally {
