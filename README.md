@@ -3,7 +3,7 @@
 
 > IT120P Project
 
-### ✨ [Demo](localhost:3000)
+### ✨ [Demo](https://reviewee.vercel.app)
 
 ## Install
 

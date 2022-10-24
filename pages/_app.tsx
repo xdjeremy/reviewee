@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import "react-loading-skeleton/dist/skeleton.css";
 import { SkeletonTheme } from "react-loading-skeleton";
 
+//todo: use cypress for presentation
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
