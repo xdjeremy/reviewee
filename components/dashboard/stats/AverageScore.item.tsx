@@ -1,10 +1,9 @@
 import React, { FC, useState } from "react";
-import Skeleton from "react-loading-skeleton";
 import { useEffectOnce } from "usehooks-ts";
 import { toast } from "react-hot-toast";
 import { supabase } from "../../../utils";
 import StatItem from "./Stat.item";
-import {ArrowTrendingUpIcon} from "@heroicons/react/24/outline";
+import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 
 const AverageScoreItem: FC = () => {
   const [loading, setLoading] = useState(true);
@@ -18,7 +17,7 @@ const AverageScoreItem: FC = () => {
           error: userError,
         } = await supabase.auth.getUser();
         if (userError) {
-          throw userError;
+          return toast.error(userError.message);
         }
 
         const { data, error } = await supabase
@@ -26,7 +25,7 @@ const AverageScoreItem: FC = () => {
           .select("is_correct")
           .eq("owner", user?.id);
         if (error) {
-          throw error;
+          return toast.error(error.message);
         }
         const correctAnswers = data.filter(
           (item: any) => item.is_correct
@@ -41,7 +40,12 @@ const AverageScoreItem: FC = () => {
     fetchAverageScore().then((_r) => setLoading(false));
   });
   return (
-    <StatItem title={'Average Score'} value={averageScore + '%'} loading={loading} icon={<ArrowTrendingUpIcon className={'w-8 h-8 stroke-2'} />} />
+    <StatItem
+      title={"Average Score"}
+      value={averageScore + "%"}
+      loading={loading}
+      icon={<ArrowTrendingUpIcon className={"h-8 w-8 stroke-2"} />}
+    />
   );
 };
 
