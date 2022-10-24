@@ -1,4 +1,4 @@
-import React, { FC, MouseEventHandler, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { QuizItems, useReview } from "./Review.provider";
 import { useEffectOnce } from "usehooks-ts";
 import FlashcardQuestionItem from "./FlashcardQuestion.item";
@@ -57,6 +57,11 @@ const FlashcardPage: FC = () => {
   };
 
   const onNext = async () => {
+    // if there are no answer then return
+    if (!answer) {
+      return toast.error("Please select an answer");
+    }
+
     // add the result to the answers array
     const result = {
       question: currentQuestion.question,
@@ -137,7 +142,7 @@ const FlashcardPage: FC = () => {
         </div>
         <button
           onClick={() => onNext()}
-          className={"btn btn-primary btn-wide mt-10"}
+          className={"btn-primary btn-wide btn mt-10"}
         >
           Next
         </button>
