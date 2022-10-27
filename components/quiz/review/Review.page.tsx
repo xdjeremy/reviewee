@@ -8,6 +8,7 @@ import { ReviewQuizButton } from "./ReviewQuiz.button";
 import { ShowQuizButton } from "./ShowQuiz.button";
 import FlashcardPage from "./Flashcard.page";
 import ShowQuizPage from "./ShowQuiz.page";
+import LeaderboardItem from "./Leaderboard.item";
 
 const ReviewPage: FC = () => {
   const { setQuizTitle, setItems, quizTitle, action, setQuizItem } =
@@ -55,9 +56,12 @@ const ReviewPage: FC = () => {
     switch (action) {
       case Action.PICKING:
         return (
-          <div className="mx-auto flex w-full flex-col justify-center gap-5 divide-y rounded-lg bg-base-100 shadow-sm lg:flex-row lg:divide-x">
-            <ReviewQuizButton />
-            <ShowQuizButton />
+          <div className={"flex flex-col gap-5"}>
+            <div className="mx-auto flex w-full flex-col justify-center gap-5 divide-y rounded-lg bg-base-100 shadow-sm lg:flex-row lg:divide-x">
+              <ReviewQuizButton />
+              <ShowQuizButton />
+            </div>
+            <LeaderboardItem />
           </div>
         );
       case Action.REVIEW:
