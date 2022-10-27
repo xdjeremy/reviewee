@@ -1,158 +1,207 @@
-import { NextPage } from 'next';
-import React, { createContext, ReactNode, useState } from 'react';
-import { Layout } from '../../components/layout';
-import { AddQuestion, QuizInput } from '../../components/quiz';
-import { useForm } from 'react-hook-form';
-import { useCounter, useEffectOnce } from 'usehooks-ts';
-import { toast } from 'react-hot-toast';
-import { classNames, supabase } from '../../utils';
-import { useRouter } from 'next/router';
+import { NextPage } from "next";
+import React, { createContext, ReactNode, useState } from "react";
+import { Layout } from "../../components/layout";
+import { AddQuestion, QuizInput } from "../../components/quiz";
+import { useForm } from "react-hook-form";
+import { useCounter } from "usehooks-ts";
+import { toast } from "react-hot-toast";
+import { classNames, supabase } from "../../utils";
+import { useRouter } from "next/router";
+import * as cleanTextUtils from "clean-text-utils";
 
 interface QuestionAndAnswer {
-	question: string;
-	answer: string;
-	quiz: string;
+  question: string;
+  answer: string;
+  quiz: string;
 }
 
 interface Item {
-	number: number;
-	component: ReactNode;
+  number: number;
+  component: ReactNode;
 }
 
 export const NewQuizContext = createContext({
-	items: [] as Item[],
-	setItems(items: Item[]) {},
+  items: [] as Item[],
+  setItems(_items: Item[]) {},
 });
 
 const NewQuiz: NextPage = () => {
-	const { count, increment } = useCounter(1);
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-		getValues,
-	} = useForm();
-	const [isLoading, setIsLoading] = useState(false);
-	const router = useRouter();
+  const { count, increment, setCount } = useCounter(1);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    setValue,
+  } = useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-	const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
 
-	const addQuestion = () => {
-		setItems([
-			...items,
-			{
-				number: count,
-				component: (
-					<QuizInput
-						register={register}
-						number={count}
-						key={count}
-						error={errors[`question${count}`]}
-					/>
-				),
-			},
-		]);
-		increment();
-	};
+  const addQuestion = () => {
+    setItems([
+      ...items,
+      {
+        number: count,
+        component: (
+          <QuizInput
+            register={register}
+            number={count}
+            key={count}
+            error={errors[`question${count}`]}
+          />
+        ),
+      },
+    ]);
+    increment();
+  };
 
-	const handleSave = async () => {
-		try {
-			setIsLoading(true);
+  const handleSave = async () => {
+    try {
+      setIsLoading(true);
 
-			if (items.length === 0) {
-				throw new Error('Quiz is empty');
-			}
+      if (items.length === 0) {
+        return toast.error("Please add at least one question");
+      }
 
-			const {
-				data: { user },
-				error: userError,
-			} = await supabase.auth.getUser();
-			if (userError) throw userError;
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError) {
+        return toast.error(userError.message);
+      }
 
-			const { data: quizData, error: quizError } = await supabase
-				.from('quiz')
-				.insert({
-					owner: user?.id,
-					title: getValues('title'),
-				})
-				.select('id');
-			if (quizError) throw quizError;
+      const { data: quizData, error: quizError } = await supabase
+        .from("quiz")
+        .insert({
+          owner: user?.id,
+          title: getValues("title"),
+        })
+        .select("id");
+      if (quizError) {
+        return toast.error(quizError.message);
+      }
 
-			const quizItems = items;
-			let questionsAnswer: QuestionAndAnswer[] = [];
-			quizItems.forEach((item) => {
-				const question = getValues(`question${item.number}`);
-				const answer = getValues(`answer${item.number}`);
-				const quiz = quizData[0].id;
-				questionsAnswer.push({ question, answer, quiz });
-			});
+      const quizItems = items;
+      let questionsAnswer: QuestionAndAnswer[] = [];
+      quizItems.forEach((item) => {
+        const question = getValues(`question${item.number}`);
+        const answer = getValues(`answer${item.number}`);
+        const quiz = quizData[0].id;
+        questionsAnswer.push({ question, answer, quiz });
+      });
 
-			const { error } = await supabase
-				.from('quiz_items')
-				.insert(questionsAnswer);
-			if (error) throw error;
+      const { error } = await supabase
+        .from("quiz_items")
+        .insert(questionsAnswer);
+      if (error) {
+        return toast.error(error.message);
+      }
 
-			// success
-			toast.success('Quiz created successfully');
-			// TODO: redirect to quiz page
-			router.push(`/quiz/${quizData[0].id}`);
-		} catch (err: any) {
-			console.log(err);
-			toast.error(err.message);
-		} finally {
-			setIsLoading(false);
-		}
-	};
+      // success
+      toast.success("Quiz created successfully");
+      // TODO: redirect to quiz page
+      await router.push(`/quiz/${quizData[0].id}`);
+    } catch (err: any) {
+      console.log(err);
+      toast.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-	// useEffectOnce(() => {
-	// 	addQuestion();
-	// });
-	return (
-		<Layout>
-			<form
-				onSubmit={handleSubmit(handleSave)}
-				className='mx-auto flex w-full max-w-7xl flex-col items-center gap-5'>
-				<p className='w-full text-left italic text-red-500'>
-					{errors.title?.message as string}
-				</p>
-				<span className='flex w-full flex-col justify-between gap-2 sm:flex-row'>
-					<input
-						type='text'
-						placeholder='Quiz Title'
-						{...register('title', {
-							required: 'Title is required',
-							minLength: {
-								value: 5,
-								message: 'Title must be at least 5 characters',
-							},
-							maxLength: {
-								value: 50,
-								message: 'Title must be at most 50 characters',
-							},
-						})}
-						className={classNames(
-							errors.title?.message ? 'input-error' : '',
-							'input input-bordered w-full max-w-lg'
-						)}
-					/>
-					<button
-						type='submit'
-						className={classNames(isLoading ? 'loading' : '', 'btn btn-info')}
-						disabled={isLoading}>
-						Save
-					</button>
-				</span>
-				<NewQuizContext.Provider
-					value={{
-						items,
-						setItems,
-					}}>
-					{items.map((item: Item) => item.component)}
-				</NewQuizContext.Provider>
-				<AddQuestion addQuestion={addQuestion} />
-			</form>
-		</Layout>
-	);
+  const importChangeHandler = async (event: any) => {
+    const file = event.target.files[0];
+
+    const response = await fetch(
+      "https://v2.convertapi.com/d/mac2xn40vaui0uvem6uz76hgr2aacrtr/Presentation.txt"
+    );
+    const data = await response.text();
+
+    // delete empty lines
+    const text = cleanTextUtils.strip.newlines(data);
+
+    //  split data by period
+    const lines = text.split(".");
+
+    const uploadQuizItems = lines.map((line, index) => {
+      const [question, answer] = line.split("?");
+      const itemCount = count + index + 1;
+      setValue(`question${itemCount}`, question, { shouldValidate: true });
+      setValue(`answer${itemCount}`, answer, { shouldValidate: true });
+      return {
+        number: itemCount,
+        component: (
+          <QuizInput
+            register={register}
+            number={itemCount}
+            key={itemCount}
+            error={errors[`question${itemCount}`]}
+          />
+        ),
+      };
+    });
+
+    setItems([...items, ...uploadQuizItems]);
+    setCount(count + lines.length + 1);
+  };
+
+  return (
+    <Layout>
+      <form
+        onSubmit={handleSubmit(handleSave)}
+        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5"
+      >
+        <p className="w-full text-left italic text-red-500">
+          {errors.title?.message as string}
+        </p>
+        <span className="flex w-full flex-col justify-between gap-2 sm:flex-row">
+          <input
+            type="text"
+            placeholder="Quiz Title"
+            {...register("title", {
+              required: "Title is required",
+              minLength: {
+                value: 5,
+                message: "Title must be at least 5 characters",
+              },
+              maxLength: {
+                value: 50,
+                message: "Title must be at most 50 characters",
+              },
+            })}
+            className={classNames(
+              errors.title?.message ? "input-error" : "",
+              "input-bordered input w-full max-w-lg"
+            )}
+          />
+          <input
+            type={"file"}
+            disabled={isLoading}
+            onChange={importChangeHandler}
+          />
+          <button
+            type="submit"
+            className={classNames(isLoading ? "loading" : "", "btn-info btn")}
+            disabled={isLoading}
+          >
+            Save
+          </button>
+        </span>
+        <NewQuizContext.Provider
+          value={{
+            items,
+            setItems,
+          }}
+        >
+          {items.map((item: Item) => item.component)}
+        </NewQuizContext.Provider>
+        <AddQuestion addQuestion={addQuestion} />
+      </form>
+    </Layout>
+  );
 };
 
 export default NewQuiz;

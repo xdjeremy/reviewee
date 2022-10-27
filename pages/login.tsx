@@ -6,6 +6,7 @@ import { useEffectOnce } from "usehooks-ts";
 import { LoginForm } from "../components/login";
 import { supabase } from "../utils";
 
+// todo: fix login button
 const Login: NextPage = () => {
   const router = useRouter();
 
