@@ -86,7 +86,7 @@ const FlashcardPage: FC = () => {
         } = await supabase.auth.getUser();
 
         if (userError) {
-          throw userError;
+          return toast.error(userError.message);
         }
 
         console.log(id);
@@ -98,7 +98,9 @@ const FlashcardPage: FC = () => {
               owner: user?.id,
             })
             .select("id");
-        if (quizAttemptError) throw quizAttemptError;
+        if (quizAttemptError) {
+          return toast.error(quizAttemptError.message);
+        }
 
         // save the results
         const { error } = await supabase.from("quiz_attempt_items").insert(
@@ -110,12 +112,13 @@ const FlashcardPage: FC = () => {
             quiz_attempt: quizAttemptData[0].id,
           }))
         );
-        if (error) throw error;
+        if (error) {
+          return toast.error(error.message);
+        }
 
         setShowResult(true);
         return;
       } catch (err: any) {
-        console.log(err);
         toast.error(err.message);
       }
     }

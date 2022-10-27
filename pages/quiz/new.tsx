@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { classNames, supabase } from "../../utils";
 import { useRouter } from "next/router";
 import * as cleanTextUtils from "clean-text-utils";
+import ConvertApi from "convertapi-js";
 
 interface QuestionAndAnswer {
   question: string;
@@ -102,7 +103,6 @@ const NewQuiz: NextPage = () => {
 
       // success
       toast.success("Quiz created successfully");
-      // TODO: redirect to quiz page
       await router.push(`/quiz/${quizData[0].id}`);
     } catch (err: any) {
       console.log(err);
@@ -115,9 +115,14 @@ const NewQuiz: NextPage = () => {
   const importChangeHandler = async (event: any) => {
     const file = event.target.files[0];
 
-    const response = await fetch(
-      "https://v2.convertapi.com/d/mac2xn40vaui0uvem6uz76hgr2aacrtr/Presentation.txt"
-    );
+    const convertApi = ConvertApi.auth("nszxwNriKaZ1WpoK");
+    let params = convertApi.createParams();
+    params.add("File", file);
+    let result = await convertApi.convert("pdf", "txt", params);
+
+    const url = result.files[0].Url;
+
+    const response = await fetch(url);
     const data = await response.text();
 
     // delete empty lines
@@ -128,7 +133,7 @@ const NewQuiz: NextPage = () => {
 
     const uploadQuizItems = lines.map((line, index) => {
       const [question, answer] = line.split("?");
-      const itemCount = count + index + 1;
+      const itemCount = count + index;
       setValue(`question${itemCount}`, question, { shouldValidate: true });
       setValue(`answer${itemCount}`, answer, { shouldValidate: true });
       return {
@@ -145,7 +150,7 @@ const NewQuiz: NextPage = () => {
     });
 
     setItems([...items, ...uploadQuizItems]);
-    setCount(count + lines.length + 1);
+    setCount(count + lines.length);
   };
 
   return (
